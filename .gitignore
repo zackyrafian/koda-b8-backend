@@ -1,0 +1,15 @@
+# env
+.env
+
+# air (hot reload)
+.air.toml
+tmp/
+cmd/api/tmp/
+cmd/tmp/
+
+# binary
+*.exe
+*.out
+
+# macos
+.DS_Store
