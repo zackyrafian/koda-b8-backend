@@ -1,0 +1,19 @@
+package usecase
+
+import (
+	"belimudah/internal/category/domain"
+	"belimudah/internal/category/dto"
+	"context"
+)
+
+type Service struct { 
+  repository domain.Repository
+}
+
+func NewCategoryService(repository domain.Repository) *Service { 
+  return &Service{repository: repository}
+}
+
+func (s *Service) Create(ctx context.Context, req dto.CreateCategoryRequest) (int64, error) { 
+  return s.repository.Create(ctx, req)
+}
