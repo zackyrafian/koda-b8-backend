@@ -30,22 +30,38 @@ func (r *AuthRepository) Register (ctx context.Context, req dto.RegisterRequest)
       INSERT INTO users (email, password) VALUES ($1, $2) RETURNING id
     `, req.Email, req.Password,
   ).Scan(&UserID)
+  if err != nil {
+    return 0, err
+  }
 
   _, err = tx.Exec(
     ctx, `
       INSERT INTO user_profiles (user_id, fullname) VALUES ($1, $2)
     `, UserID, req.FullName,
-  ) 
-
-  if err := tx.Commit(ctx); err != nil { 
-    return 0, err 
+  )
+  if err != nil {
+    return 0, err
   }
-  return UserID, err
+
+  if err := tx.Commit(ctx); err != nil {
+    return 0, err
+  }
+  return UserID, nil
 }
 
-func (r *AuthRepository) Login (ctx context.Context ,req dto.LoginRequest) (userDomain.User, error) { 
+func (r *AuthRepository) Login (ctx context.Context, req dto.LoginRequest) (userDomain.User, error) { 
   var user = userDomain.User{}
-  err := r.db.QueryRow(ctx ,`SELECT id, email, password, fullname FROM users JOIN user_profiles ON user.id = user_profiles.user_id WHERE email = $1`, req.Email).Scan(&user.ID, &user.Email, &user.Password, &user.Fullname)
+  err := r.db.QueryRow(ctx, `
+      SELECT u.id, u.email, u.password, p.fullname
+      FROM users u
+      JOIN user_profiles p ON u.id = p.user_id
+      WHERE u.email = $1
+  `, req.Email).Scan(
+      &user.ID,
+      &user.Email,
+      &user.Password,
+      &user.Fullname,
+  )
 
   if err != nil { 
     return user, errors.New("Failed")

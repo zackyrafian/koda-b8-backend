@@ -16,5 +16,5 @@ func AuthRegiter(r gin.IRouter, db *pgxpool.Pool) {
 
   auth := r.Group("/auth")
   auth.POST("/register", handler.Register)
-  auth.POST("/login")
+  auth.POST("/login", handler.Login)
 }
