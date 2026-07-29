@@ -17,3 +17,7 @@ func NewCategoryService(repository domain.Repository) *Service {
 func (s *Service) Create(ctx context.Context, req dto.CreateCategoryRequest) (int64, error) { 
   return s.repository.Create(ctx, req)
 }
+
+func (s *Service) FindAll(ctx context.Context) ([]domain.Category, error) {
+  return s.repository.GetAll(ctx)
+}

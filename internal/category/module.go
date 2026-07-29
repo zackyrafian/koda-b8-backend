@@ -14,5 +14,7 @@ func CategoryRegister(r gin.IRouter, db *pgxpool.Pool) {
   service := usecase.NewCategoryService(repo)
   handler := handler.NewCategoryHandler(service)
 
-  r.POST("/category", handler.Create)
+  categories := r.Group("/categories")
+  categories.POST("/", handler.Create)
+  categories.GET("/", handler.GetAll)
 }

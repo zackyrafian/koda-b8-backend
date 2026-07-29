@@ -7,4 +7,5 @@ import (
 
 type Repository interface { 
   Create(ctx context.Context, req dto.CreateCategoryRequest) (int64, error)
+  GetAll(ctx context.Context) ([]Category, error)
 }

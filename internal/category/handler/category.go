@@ -32,3 +32,19 @@ func (h *Handler) Create(c *gin.Context) {
     "id": id,
   })
 }
+
+func (h *Handler) GetAll(c *gin.Context) { 
+  categories, err := h.service.FindAll(c.Request.Context()) 
+
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"success": false,
+		})
+		return
+	}
+  
+	c.JSON(http.StatusOK, gin.H{
+    "success": true, 
+    "results": categories,
+  })
+}
