@@ -30,5 +30,25 @@ func (r *CategoryRepository) GetAll(ctx context.Context) ([]domain.Category, err
   return categories, err
 }
 
+func (r *CategoryRepository) GetByID (ctx context.Context, id int64) (domain.Category, error) {   
+  var category domain.Category
+  err := r.db.QueryRow(
+    ctx, 
+    `SELECT id, name FROM categories WHERE id = $1` ,id, 
+  ).Scan(&category.ID, &category.Name)
 
+  if err != nil { 
+    return category, err
+  }
+  return category, err
+}
+
+func (r *CategoryRepository) Delete(ctx context.Context, id int64) (int64, error) { 
+
+  _, err := r.db.Exec(ctx, `DELETE FROM categories WHERE id = $1`, id)
+  if err != nil { 
+    return 0, err
+  }
+  return id, err
+}
 

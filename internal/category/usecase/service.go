@@ -4,6 +4,7 @@ import (
 	"belimudah/internal/category/domain"
 	"belimudah/internal/category/dto"
 	"context"
+
 )
 
 type Service struct { 
@@ -20,4 +21,8 @@ func (s *Service) Create(ctx context.Context, req dto.CreateCategoryRequest) (in
 
 func (s *Service) FindAll(ctx context.Context) ([]domain.Category, error) {
   return s.repository.GetAll(ctx)
+}
+
+func (s *Service) FindByID(ctx context.Context, id int64) (domain.Category, error) { 
+  return s.repository.GetByID(ctx, id)
 }

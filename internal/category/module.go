@@ -17,4 +17,6 @@ func CategoryRegister(r gin.IRouter, db *pgxpool.Pool) {
   categories := r.Group("/categories")
   categories.POST("/", handler.Create)
   categories.GET("/", handler.GetAll)
+  categories.GET("/:id", handler.GetByID)
+  categories.DELETE("/:id")
 }
