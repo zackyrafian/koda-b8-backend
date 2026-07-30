@@ -3,6 +3,7 @@ package handler
 import (
 	"belimudah/internal/category/dto"
 	"belimudah/internal/category/usecase"
+	"belimudah/internal/pkg/utils"
 	"net/http"
 	"strconv"
 
@@ -71,5 +72,26 @@ func (h *Handler) GetByID(c *gin.Context) {
   c.JSON(http.StatusOK, gin.H{ 
     "success": true, 
     "result": category,
+  })
+}
+
+func (h *Handler) Delete(c *gin.Context) { 
+  id, ok := utils.ParseIDParam(c)
+
+  if !ok { 
+    return
+  }
+  _, err := h.service.Delete(c.Request.Context(), id) 
+  if err != nil { 
+    c.JSON(http.StatusInternalServerError, gin.H{ 
+      "success": false, 
+      "message": err.Error(),
+    })
+    return
+  }
+
+  c.JSON(http.StatusOK, gin.H{ 
+    "success": true,
+    "message": "Success delete category", 
   })
 }

@@ -18,5 +18,5 @@ func CategoryRegister(r gin.IRouter, db *pgxpool.Pool) {
   categories.POST("/", handler.Create)
   categories.GET("/", handler.GetAll)
   categories.GET("/:id", handler.GetByID)
-  categories.DELETE("/:id")
+  categories.DELETE("/:id", handler.Delete)
 }

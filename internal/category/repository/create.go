@@ -4,6 +4,7 @@ import (
 	"belimudah/internal/category/domain"
 	"belimudah/internal/category/dto"
 	"context"
+	"fmt"
 
 	"github.com/jackc/pgx/v5"
 )
@@ -44,10 +45,9 @@ func (r *CategoryRepository) GetByID (ctx context.Context, id int64) (domain.Cat
 }
 
 func (r *CategoryRepository) Delete(ctx context.Context, id int64) (int64, error) { 
-
   _, err := r.db.Exec(ctx, `DELETE FROM categories WHERE id = $1`, id)
   if err != nil { 
-    return 0, err
+    return 0, fmt.Errorf("Category with id %d not found", id)
   }
   return id, err
 }

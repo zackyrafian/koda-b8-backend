@@ -26,3 +26,7 @@ func (s *Service) FindAll(ctx context.Context) ([]domain.Category, error) {
 func (s *Service) FindByID(ctx context.Context, id int64) (domain.Category, error) { 
   return s.repository.GetByID(ctx, id)
 }
+
+func (s *Service) Delete(ctx context.Context, id int64) (int64, error) { 
+  return s.repository.Delete(ctx, id)
+}
