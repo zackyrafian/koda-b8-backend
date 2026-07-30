@@ -18,10 +18,10 @@ func NewAuthRepository(db *pgxpool.Pool) *AuthRepository{
 }
 
 
-func (r *AuthRepository) Register (ctx context.Context, req dto.RegisterRequest) (int64, error) { 
+func (r *AuthRepository) Register (ctx context.Context, req dto.RegisterRequest) (string, error) { 
   tx, err := r.db.Begin(ctx) 
   if err != nil { 
-    return 0, err
+    return "", err
   }
   var UserID int64
   defer tx.Rollback(ctx)
@@ -31,7 +31,7 @@ func (r *AuthRepository) Register (ctx context.Context, req dto.RegisterRequest)
     `, req.Email, req.Password,
   ).Scan(&UserID)
   if err != nil {
-    return 0, err
+    return "", err
   }
 
   _, err = tx.Exec(
@@ -40,13 +40,13 @@ func (r *AuthRepository) Register (ctx context.Context, req dto.RegisterRequest)
     `, UserID, req.FullName,
   )
   if err != nil {
-    return 0, err
+    return "", err
   }
 
   if err := tx.Commit(ctx); err != nil {
-    return 0, err
+    return "", err
   }
-  return UserID, nil
+  return req.FullName, nil
 }
 
 func (r *AuthRepository) Login (ctx context.Context, req dto.LoginRequest) (userDomain.User, error) { 

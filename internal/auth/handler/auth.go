@@ -23,15 +23,17 @@ func (h *AuthHandler) Register(c *gin.Context) {
     c.JSON(http.StatusBadRequest, err.Error())
     return
   }
-  id, err := h.service.Register(c.Request.Context(), req)
+  name, err := h.service.Register(c.Request.Context(), req)
   if err != nil { 
     c.JSON(http.StatusInternalServerError, gin.H{ 
+      "success": false,
       "error": err.Error(),
     })
     return
   }
   c.JSON(http.StatusCreated, gin.H{ 
-    "id": id,
+    "success": true, 
+    "message": fmt.Sprintf("Successfully created account %s",  name),
   })
 }
 
@@ -39,7 +41,10 @@ func (h *AuthHandler) Login(c *gin.Context) {
   var req dto.LoginRequest
 
   if err := c.ShouldBindJSON(&req); err != nil { 
-    c.JSON(http.StatusBadRequest, err.Error())
+    c.JSON(http.StatusBadRequest, gin.H{ 
+      "success": false,
+      "message": err.Error(),
+    })
     return
   }
 
@@ -47,11 +52,17 @@ func (h *AuthHandler) Login(c *gin.Context) {
   token, err := h.service.Login(c.Request.Context(), req) 
   if err != nil { 
     c.JSON(http.StatusInternalServerError, gin.H{ 
-      "error": err.Error(),
+      "success": false,
+      "message": err.Error(),
     })
+    return 
   }
   c.JSON(http.StatusAccepted, gin.H{ 
     "success": true,
     "token": token,
   })
+}
+
+func (h *AuthHandler) ForgetPassword(c *gin.Context) { 
+  
 }
