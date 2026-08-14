@@ -7,14 +7,20 @@ import (
 	"belimudah/internal/product"
 	"belimudah/internal/user"
 	"context"
+	"fmt"
 	"log"
 
 	"github.com/gin-gonic/gin"
 	"github.com/jackc/pgx/v5/pgxpool"
+	"github.com/joho/godotenv"
 )
 func main() { 
   r := gin.Default()  
   ctx := context.Background()
+  err := godotenv.Load()
+  if err != nil { 
+    fmt.Print("Failed load .env")
+  }
 
  	db, err := pgxpool.New(ctx,
 		"postgres://postgres:admin@localhost:5432/postgres")
