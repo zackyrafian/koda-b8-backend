@@ -1,6 +1,7 @@
 package user
 
 import (
+	"belimudah/internal/middleware"
 	"belimudah/internal/user/handler"
 	"belimudah/internal/user/repository"
 	"belimudah/internal/user/usecase"
@@ -14,5 +15,7 @@ func UserRegister(r gin.IRouter, db *pgxpool.Pool) {
   service := usecase.NewUserService(repo) 
   handler := handler.NewUserHandler(service) 
 
-  r.POST("/user", handler.Create)
+  user := r.Group("/users")
+  user.Use(middleware.AuthMiddleware())
+  user.GET("/me", handler.GetMe)
 }

@@ -32,3 +32,10 @@ func (h *UserHandler) Create (c *gin.Context) {
     "id": id,
   })
 }
+
+func (h *UserHandler) GetMe(c *gin.Context) { 
+  userID := c.MustGet("user_id").(int64)
+  c.JSON(http.StatusOK, gin.H{ 
+    "user_id": userID,
+  })
+}
