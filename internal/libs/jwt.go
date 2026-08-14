@@ -24,21 +24,25 @@ func GenerateToken (id int64) (string, error) {
   }
   token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
   ss, err := token.SignedString(key)
-  if err != nil { 
-    return "", nil
+  if err != nil {
+    return "", err
   }
   return ss, nil
 }
 
-func VerifyToken (token string) error { 
-  x, err := jwt.ParseWithClaims(token, &MyCustomClaims{}, func(x *jwt.Token) (any, error) { 
-    return []byte(os.Getenv("JWT_SECRET")), nil
-  })
-  if err != nil {
-     return err
-  }
-  if !x.Valid {
-     return fmt.Errorf("invalid token")
-  }
-  return nil
+func VerifyToken(token string) (*MyCustomClaims, error) {
+	x, err := jwt.ParseWithClaims(token, &MyCustomClaims{}, func(x *jwt.Token) (any, error) {
+		return []byte(os.Getenv("JWT_SECRET")), nil
+	})
+	if err != nil {
+		return nil, err
+	}
+	if !x.Valid {
+		return nil, fmt.Errorf("invalid token")
+	}
+	claims, ok := x.Claims.(*MyCustomClaims)
+	if !ok {
+		return nil, fmt.Errorf("invalid token claims")
+	}
+	return claims, nil
 }
