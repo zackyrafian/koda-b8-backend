@@ -64,5 +64,25 @@ func (h *AuthHandler) Login(c *gin.Context) {
 }
 
 func (h *AuthHandler) ForgetPassword(c *gin.Context) { 
-  
+  var email string
+
+  if err := c.ShouldBindJSON(&email); err != nil { 
+    c.JSON(http.StatusBadRequest, gin.H{ 
+      "success": false, 
+      "message": "Failed format email", 
+    })
+  }
+
+  email, err := h.service.ForgetPassword(c.Request.Context(), email)
+
+  if err != nil { 
+    c.JSON(http.StatusInternalServerError, gin.H{ 
+      "success": false, 
+      "message": "",
+    })
+  }
+  c.JSON(http.StatusOK, gin.H{ 
+    "success": true,
+    "data" : email, 
+  })
 }
