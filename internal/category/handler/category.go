@@ -75,6 +75,25 @@ func (h *Handler) GetByID(c *gin.Context) {
   })
 }
 
+func (h *Handler) Update(c *gin.Context) {
+	id, err := strconv.ParseInt(c.Param("id"), 10, 64)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"success": false, "message": "invalid id"})
+		return
+	}
+	var req dto.CreateCategoryRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"success": false, "message": err.Error()})
+		return
+	}
+	category, err := h.service.Update(c.Request.Context(), id, req)
+	if err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"success": false, "message": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"success": true, "result": category})
+}
+
 func (h *Handler) Delete(c *gin.Context) { 
   id, ok := utils.ParseIDParam(c)
 

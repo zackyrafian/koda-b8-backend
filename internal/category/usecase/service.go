@@ -27,6 +27,10 @@ func (s *Service) FindByID(ctx context.Context, id int64) (domain.Category, erro
   return s.repository.GetByID(ctx, id)
 }
 
-func (s *Service) Delete(ctx context.Context, id int64) (int64, error) { 
-  return s.repository.Delete(ctx, id)
+func (s *Service) Update(ctx context.Context, id int64, req dto.CreateCategoryRequest) (domain.Category, error) {
+	return s.repository.Update(ctx, id, req)
+}
+
+func (s *Service) Delete(ctx context.Context, id int64) (int64, error) {
+	return s.repository.Delete(ctx, id)
 }

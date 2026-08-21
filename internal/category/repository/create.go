@@ -44,11 +44,23 @@ func (r *CategoryRepository) GetByID (ctx context.Context, id int64) (domain.Cat
   return category, err
 }
 
-func (r *CategoryRepository) Delete(ctx context.Context, id int64) (int64, error) { 
-  _, err := r.db.Exec(ctx, `DELETE FROM categories WHERE id = $1`, id)
-  if err != nil { 
-    return 0, fmt.Errorf("Category with id %d not found", id)
-  }
-  return id, err
+func (r *CategoryRepository) Update(ctx context.Context, id int64, req dto.CreateCategoryRequest) (domain.Category, error) {
+	var category domain.Category
+	err := r.db.QueryRow(ctx,
+		`UPDATE categories SET name = $1, updated_at = NOW() WHERE id = $2 RETURNING id, name, created_at`,
+		req.Name, id,
+	).Scan(&category.ID, &category.Name, &category.CreatedAt)
+	if err != nil {
+		return category, fmt.Errorf("category with id %d not found", id)
+	}
+	return category, nil
+}
+
+func (r *CategoryRepository) Delete(ctx context.Context, id int64) (int64, error) {
+	_, err := r.db.Exec(ctx, `DELETE FROM categories WHERE id = $1`, id)
+	if err != nil {
+		return 0, fmt.Errorf("category with id %d not found", id)
+	}
+	return id, nil
 }
 
