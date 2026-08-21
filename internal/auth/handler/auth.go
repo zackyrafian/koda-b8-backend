@@ -48,7 +48,6 @@ func (h *AuthHandler) Login(c *gin.Context) {
     return
   }
 
-  fmt.Print(req)
   token, err := h.service.Login(c.Request.Context(), req) 
   if err != nil { 
     c.JSON(http.StatusInternalServerError, gin.H{ 

@@ -31,7 +31,6 @@ func (s *AuthService) Register(ctx context.Context, req dto.RegisterRequest) (st
     Password: hashPassword,
   }
 
-  fmt.Print(user)
   return s.repository.Register(ctx, user)
 }
 
@@ -50,9 +49,9 @@ func (s *AuthService) Login(ctx context.Context, req dto.LoginRequest) (string, 
 		return "", fmt.Errorf("invalid email or password")
 	}
 
-	token, err := libs.GenerateToken(user.ID)
-	if err != nil { 
-	  return "", err
+	token, err := libs.GenerateToken(user.ID, user.Role)
+	if err != nil {
+		return "", err
 	}
 	return token, nil
 }

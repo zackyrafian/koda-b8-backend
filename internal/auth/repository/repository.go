@@ -49,23 +49,23 @@ func (r *AuthRepository) Register (ctx context.Context, req dto.RegisterRequest)
   return req.FullName, nil
 }
 
-func (r *AuthRepository) Login (ctx context.Context, req dto.LoginRequest) (userDomain.User, error) { 
-  var user = userDomain.User{}
-  err := r.db.QueryRow(ctx, `
-      SELECT u.id, u.email, u.password, p.fullname
-      FROM users u
-      JOIN user_profiles p ON u.id = p.user_id
-      WHERE u.email = $1
-  `, req.Email).Scan(
-      &user.ID,
-      &user.Email,
-      &user.Password,
-      &user.Fullname,
-  )
-
-  if err != nil { 
-    return user, errors.New("Failed")
-  }
-  return user, err
+func (r *AuthRepository) Login(ctx context.Context, req dto.LoginRequest) (userDomain.User, error) {
+	var user userDomain.User
+	err := r.db.QueryRow(ctx, `
+		SELECT u.id, u.email, u.password, u.role, p.fullname
+		FROM users u
+		JOIN user_profiles p ON u.id = p.user_id
+		WHERE u.email = $1
+	`, req.Email).Scan(
+		&user.ID,
+		&user.Email,
+		&user.Password,
+		&user.Role,
+		&user.Fullname,
+	)
+	if err != nil {
+		return user, errors.New("invalid email or password")
+	}
+	return user, nil
 }
 
