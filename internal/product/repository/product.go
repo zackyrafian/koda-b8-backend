@@ -17,7 +17,7 @@ func NewProductRepository(db *pgxpool.Pool) *ProductRepository{
 
 func (r *ProductRepository) FindByID(ctx context.Context, id int64) (*dto.DetailResponse, error) {  
 
-  query := `
+	query := `
 	SELECT
 		p.id,
 		p.name,
@@ -30,7 +30,7 @@ func (r *ProductRepository) FindByID(ctx context.Context, id int64) (*dto.Detail
   
 		p.price,
 		p.discount,
-		p.rating,
+		COALESCE(AVG(pr.rating), 0) AS rating,
 		p.stock,
 		p.sold_out,
 		p.description,
@@ -60,6 +60,9 @@ func (r *ProductRepository) FindByID(ctx context.Context, id int64) (*dto.Detail
   
 	LEFT JOIN product_images pi
 		ON pi.product_id = p.id
+
+	LEFT JOIN product_reviews pr
+		ON pr.product_id = p.id
   
 	WHERE p.id = $1
   
@@ -72,7 +75,6 @@ func (r *ProductRepository) FindByID(ctx context.Context, id int64) (*dto.Detail
 		c.name,
 		p.price,
 		p.discount,
-		p.rating,
 		p.stock,
 		p.sold_out,
 		p.description;
@@ -127,7 +129,7 @@ SELECT
 
 	p.price,
 	p.discount,
-	p.rating,
+	COALESCE(AVG(pr.rating), 0) AS rating,
 	p.stock,
 	p.sold_out,
 	p.description,
@@ -158,6 +160,9 @@ LEFT JOIN product_variants pv
 LEFT JOIN product_images pi
 	ON pi.product_id = p.id
 
+LEFT JOIN product_reviews pr
+	ON pr.product_id = p.id
+
 GROUP BY
 	p.id,
 	p.name,
@@ -167,7 +172,6 @@ GROUP BY
 	c.name,
 	p.price,
 	p.discount,
-	p.rating,
 	p.stock,
 	p.sold_out,
 	p.description
